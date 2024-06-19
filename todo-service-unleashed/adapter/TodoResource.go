@@ -13,12 +13,12 @@ package adapter
 
 import (
 	"github.com/Unleash/unleash-client-go/v3"
+	unleashContext "github.com/Unleash/unleash-client-go/v3/context"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"strconv"
 	"strings"
-
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/unexist/showcase-feature-flags/docs"
 	"github.com/unexist/showcase-feature-flags/domain"
@@ -188,7 +188,7 @@ func (resource *TodoResource) deleteTodo(context *gin.Context) {
 // @Summary Get hello from todo
 // @Description Get hello from todo
 // @Produce json
-// @Tags Todo
+// @Tags Featureflag
 // @Success 200 {string} string "Hello message"
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Server error"
@@ -196,7 +196,14 @@ func (resource *TodoResource) deleteTodo(context *gin.Context) {
 func (resource *TodoResource) getTodoHello(context *gin.Context) {
 	var retVal = ""
 
-	if unleash.IsEnabled("app.NewHello") {
+	// Provide some user infos
+	ctx := unleashContext.Context{
+		UserId:        "1",
+		SessionId:     "some-session-id",
+		RemoteAddress: context.RemoteIP(),
+	}
+
+	if unleash.IsEnabled("app.NewHello", unleash.WithContext(ctx)) {
 		retVal = "Howdie!"
 	} else {
 		retVal = "Hey!"
