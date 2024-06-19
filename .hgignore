@@ -7,3 +7,4 @@ target/
 .mvn/
 
 *.bin
+run.sh
