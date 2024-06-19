@@ -196,6 +196,7 @@ func (resource *TodoResource) deleteTodo(context *gin.Context) {
 func (resource *TodoResource) getTodoHello(context *gin.Context) {
 	var retVal = ""
 
+	// tag::unleash[]
 	// Provide some user infos
 	ctx := unleashContext.Context{
 		UserId:        "1",
@@ -208,6 +209,7 @@ func (resource *TodoResource) getTodoHello(context *gin.Context) {
 	} else {
 		retVal = "Hey!"
 	}
+	// end::unleash[]
 
 	context.JSON(http.StatusOK, gin.H{"hello": retVal})
 }

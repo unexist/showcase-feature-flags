@@ -45,6 +45,13 @@ $ make hello
 }
 ----
 
+== Under the hood
+
+The magic basically happens here:
+
+[source,go]
+include::todo-service-unleash/adapter/TodoResource.go[tag=unleash,indent=2]
+
 == Links
 
 - https://github.com/Unleash/unleash
