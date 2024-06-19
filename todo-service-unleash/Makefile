@@ -35,3 +35,4 @@ clear:
 
 install:
 	go get github.com/Unleash/unleash-client-go/v3
+	go install github.com/swaggo/swag/cmd/swag@latest
