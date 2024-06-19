@@ -1,35 +1,17 @@
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := build-gin
 .ONESHELL:
 
 EXE_GIN := todo-service.bin
+API_URL := http://localhost:4242/api
 
-define JSON_TODO
-curl -X 'POST' \
-  'http://localhost:8080/todo' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "description": "string",
-  "done": true,
-  "title": "string"
-}'
-endef
-export JSON_TODO
-# Tools
-todo:
-	@echo $$JSON_TODO | bash
-
-list:
-	@curl -X 'GET' 'http://localhost:8080/todo' -H 'accept: */*' | jq .
+--guard-%:
+	@if [ "${${*}}" = "" ]; then \
+		echo "Environment variable $* not set: $*=abc123 make $(MAKECMDGOALS)"; \
+		exit 1; \
+	fi
 
 swagger:
-	@$(SHELL) -c "cd todo-service-gin; swag init"
-
-open-swagger:
-	open http://localhost:8080/swagger/index.html
-
-c4:
-	@$(SHELL) -c "cd tools; ./$(EXE_STRUCT) && plantuml *.plantuml"
+	@$(SHELL) -c "swag init"
 
 # Build
 build-gin:
@@ -40,8 +22,8 @@ vet-gin:
 	@$(SHELL) -c "go vet"
 
 # Run
-run-gin:
-	@$(SHELL) -c "./$(EXE_GIN)"
+run-gin: --guard-API_TOKEN
+	@$(SHELL) -c "API_URL=$(API_URL) API_TOKEN=$(API_TOKEN) ./$(EXE_GIN)"
 
 # Tests
 test-gin:
@@ -50,3 +32,6 @@ test-gin:
 # Helper
 clear:
 	rm -rf ./$(EXE_GIN)
+
+install:
+	go get github.com/Unleash/unleash-client-go/v3

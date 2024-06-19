@@ -34,7 +34,7 @@ endef
 export GELF_TEST_TCP
 
 # Podman
-PODNAME := unleash
+PODNAME := featureflag
 
 pd-compose:
 	@podman-compose -f docker/docker-compose.yaml -p $(PODNAME) up
@@ -89,9 +89,9 @@ pd-pod-recreate: pd-pod-rm pd-pod-create
  #     retries: 5
  #    start_period: 15s
 
-pd-postgres:
+pd-unleash:
 	@podman run -dit --name unleash --pod=$(PODNAME) \
-		-e "DATABASE_URL=postgres://postgres:unleash@db/db" \
+		-e "DATABASE_URL=postgres://postgres:unleash@postgres/db" \
 	    -e "DATABASE_SSL=false" \
     	-e "LOG_LEVEL=warn" \
 	    -e "INIT_FRONTEND_API_TOKENS=default:development.unleash-insecure-frontend-api-token" \
@@ -122,7 +122,7 @@ pd-postgres:
 #      retries: 5
 #      start_period: 10s
 
-pd-jaeger:
+pd-postgres:
 	@podman run -dit --name postgres --pod=$(PODNAME) \
 		-e "POSTGRES_DB=db" \
 		-e "POSTGRES_HOST_AUTH_METHOD=trust" \
