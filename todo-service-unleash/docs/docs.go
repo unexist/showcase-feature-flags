@@ -74,6 +74,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/todo/hello": {
+            "get": {
+                "description": "Get hello from todo",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Featureflag"
+                ],
+                "summary": "Get hello from todo",
+                "responses": {
+                    "200": {
+                        "description": "Hello message",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/todo/{id}": {
             "get": {
                 "description": "Get todo by id",
@@ -96,6 +128,12 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "Todo found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Todo not found",
                         "schema": {
                             "type": "string"
                         }
