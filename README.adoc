@@ -5,7 +5,7 @@ This project is a showcase for feature flags
 == Modules
 
 - *infrastructure* - Showcase for arc42
-- *todo-service-unleash* - Showcase for Unleashed on Golang
+- *todo-service-unleash* - Showcase for Unleash on GinGonic +Updated  Golang
 
 == Links
 
