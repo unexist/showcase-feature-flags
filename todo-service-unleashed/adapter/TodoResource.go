@@ -12,6 +12,7 @@
 package adapter
 
 import (
+	"github.com/Unleash/unleash-client-go/v3"
 	"net/http"
 	"strconv"
 	"strings"
@@ -184,6 +185,26 @@ func (resource *TodoResource) deleteTodo(context *gin.Context) {
 	context.Status(http.StatusNoContent)
 }
 
+// @Summary Get hello from todo
+// @Description Get hello from todo
+// @Produce json
+// @Tags Todo
+// @Success 200 {string} string "Hello message"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Server error"
+// @Router /todo/hello [get]
+func (resource *TodoResource) getTodoHello(context *gin.Context) {
+	var retVal = ""
+
+	if unleash.IsEnabled("app.NewHello") {
+		retVal = "Howdie!"
+	} else {
+		retVal = "Hey!"
+	}
+
+	context.JSON(http.StatusOK, gin.H{"hello": retVal})
+}
+
 // Register REST routes on given engine
 func (resource *TodoResource) RegisterRoutes(engine *gin.Engine) {
 	docs.SwaggerInfo.BasePath = "/"
@@ -195,6 +216,8 @@ func (resource *TodoResource) RegisterRoutes(engine *gin.Engine) {
 		todo.GET("/:id", resource.getTodo)
 		todo.PUT("/:id", resource.updateTodo)
 		todo.DELETE("/:id", resource.deleteTodo)
+
+		todo.GET("/hello", resource.getTodoHello)
 	}
 
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

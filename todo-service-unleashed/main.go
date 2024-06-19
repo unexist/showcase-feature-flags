@@ -14,6 +14,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/Unleash/unleash-client-go/v3"
 	"github.com/gin-gonic/gin"
 
 	"github.com/unexist/showcase-feature-flags/adapter"
@@ -22,6 +23,15 @@ import (
 
 	"log"
 )
+
+func init() {
+	unleash.Initialize(
+		unleash.WithListener(&unleash.DebugListener{}),
+		unleash.WithAppName("todo-service-unleash"),
+		unleash.WithUrl("http://localhost:8080/todo"),
+		unleash.WithCustomHeaders(http.Header{"Authorization": {"<API token>"}}),
+	)
+}
 
 func main() {
 	/* Create business stuff */
