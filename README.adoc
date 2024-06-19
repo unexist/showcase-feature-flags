@@ -1,0 +1,14 @@
+= Showcase for feature flags
+
+This project is a showcase for feature flags
+
+== Modules
+
+- *infrastructure* - Showcase for arc42
+- *todo-service-unleashed* - Showcase for Unleashed on Golang
+
+== Links
+
+- https://github.com/Unleash/unleash
+- https://www.getunleash.io/
+- https://featureflagsbook.com/
