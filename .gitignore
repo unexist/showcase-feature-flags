@@ -37,3 +37,4 @@ release.properties
 
 *.bin
 run.sh
+test.sh
