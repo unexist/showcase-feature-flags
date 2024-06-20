@@ -14,20 +14,20 @@ swagger:
 	@$(SHELL) -c "swag init"
 
 # Build
-build-gin:
+build:
 	@$(SHELL) -c "GO111MODULE=on; go mod download; go build -o $(EXE_GIN)"
 
 # Analysis
-vet-gin:
+vet:
 	@$(SHELL) -c "go vet"
 
 # Run
-run-gin: --guard-API_TOKEN
+run: --guard-API_TOKEN
 	@$(SHELL) -c "API_URL=$(API_URL) API_TOKEN=$(API_TOKEN) ./$(EXE_GIN)"
 
 # Tests
-test-gin:
-	@$(SHELL) -c "go test -v ./test"
+test: --guard-API_TOKEN
+	@$(SHELL) -c "API_URL=$(API_URL) API_TOKEN=$(API_TOKEN) go test -count=1 -v ./test"
 
 # Helper
 clear:

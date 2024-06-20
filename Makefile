@@ -21,9 +21,6 @@ todo:
 list:
 	@curl -X 'GET' 'http://localhost:8080/todo' -H 'accept: */*' | jq .
 
-hello:
-	@curl -X 'GET' 'http://localhost:8080/todo/hello' -H 'accept: */*' | jq .
-
 open-swagger:
 	open http://localhost:8080/swagger/index.html
 
