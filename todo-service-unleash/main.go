@@ -14,6 +14,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Unleash/unleash-client-go/v3"
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,8 @@ func init() {
 		unleash.WithAppName("todo-service-unleash"),
 		unleash.WithUrl(os.Getenv("API_URL")),
 		unleash.WithCustomHeaders(http.Header{"Authorization": {os.Getenv("API_TOKEN")}}),
+		unleash.WithRefreshInterval(1*time.Second),
+		unleash.WithMetricsInterval(1*time.Second),
 	)
 }
 
