@@ -79,6 +79,24 @@ func (resource *TodoResource) createTodo(context *gin.Context) {
 	var todo domain.Todo
 
 	if nil == context.Bind(&todo) {
+
+		// tag::unleash[]
+		// Provide some user infos
+		ctx := unleashContext.Context{
+			UserId:        "1",
+			SessionId:     "some-session-id",
+			RemoteAddress: context.RemoteIP(),
+		}
+
+		if unleash.IsEnabled("feat.CheckBadwords", unleash.WithContext(ctx)) {
+			if containsBadword(todo.Title) {
+				context.JSON(http.StatusExpectationFailed, gin.H{"error": "Title contains badword"})
+
+				return
+			}
+		}
+		// end::unleash[]
+
 		if err := resource.service.CreateTodo(&todo); nil != err {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 
@@ -185,33 +203,8 @@ func (resource *TodoResource) deleteTodo(context *gin.Context) {
 	context.Status(http.StatusNoContent)
 }
 
-// @Summary Get hello from todo
-// @Description Get hello from todo
-// @Produce json
-// @Tags Featureflag
-// @Success 200 {string} string "Hello message"
-// @Failure 400 {string} string "Bad request"
-// @Failure 500 {string} string "Server error"
-// @Router /todo/hello [get]
-func (resource *TodoResource) getTodoHello(context *gin.Context) {
-	var retVal = ""
-
-	// tag::unleash[]
-	// Provide some user infos
-	ctx := unleashContext.Context{
-		UserId:        "1",
-		SessionId:     "some-session-id",
-		RemoteAddress: context.RemoteIP(),
-	}
-
-	if unleash.IsEnabled("app.NewHello", unleash.WithContext(ctx)) {
-		retVal = "Howdie!"
-	} else {
-		retVal = "Hey!"
-	}
-	// end::unleash[]
-
-	context.JSON(http.StatusOK, gin.H{"hello": retVal})
+func containsBadword(stringToCheck string) bool {
+	return strings.Contains(stringToCheck, "crap")
 }
 
 // Register REST routes on given engine
@@ -225,8 +218,6 @@ func (resource *TodoResource) RegisterRoutes(engine *gin.Engine) {
 		todo.GET("/:id", resource.getTodo)
 		todo.PUT("/:id", resource.updateTodo)
 		todo.DELETE("/:id", resource.deleteTodo)
-
-		todo.GET("/hello", resource.getTodoHello)
 	}
 
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

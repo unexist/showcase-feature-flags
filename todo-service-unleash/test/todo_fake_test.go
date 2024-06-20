@@ -12,8 +12,11 @@
 package test
 
 import (
+	"github.com/Unleash/unleash-client-go/v3"
+	unleashContext "github.com/Unleash/unleash-client-go/v3/context"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"time"
 
 	"os"
 	"testing"
@@ -32,6 +35,17 @@ import (
 /* Test globals */
 var engine *gin.Engine
 var todoRepository *infrastructure.TodoFakeRepository
+
+func init() {
+	unleash.Initialize(
+		unleash.WithListener(&unleash.DebugListener{}),
+		unleash.WithAppName("todo-service-unleash"),
+		unleash.WithUrl(os.Getenv("API_URL")),
+		unleash.WithCustomHeaders(http.Header{"Authorization": {os.Getenv("API_TOKEN")}}),
+		unleash.WithRefreshInterval(1*time.Second),
+		unleash.WithMetricsInterval(1*time.Second),
+	)
+}
 
 func TestMain(m *testing.M) {
 	/* Create business stuff */
@@ -106,6 +120,32 @@ func TestCreateTodo(t *testing.T) {
 	assert.Equal(t, 1.0, m["id"], "Expected todo ID to be '1'")
 	assert.Equal(t, "string", m["title"], "Expected todo title to be 'string'")
 	assert.Equal(t, "string", m["description"], "Expected todo description to be 'string'")
+}
+
+func TestCreateTodoBadword(t *testing.T) {
+	todoRepository.Clear()
+
+	ctx := unleashContext.Context{
+		UserId:        "1",
+		SessionId:     "some-session-id",
+		RemoteAddress: "test",
+	}
+
+	if unleash.IsEnabled("feat.CheckBadwords", unleash.WithContext(ctx)) {
+		var jsonStr = []byte(`{"title":"string crap", "description": "string"}`)
+
+		req, _ := http.NewRequest("POST", "/todo", bytes.NewBuffer(jsonStr))
+		req.Header.Set("Content-Type", "application/json")
+
+		response := executeRequest(req)
+		checkResponseCode(t, http.StatusExpectationFailed, response.Code)
+
+		var m map[string]interface{}
+		json.Unmarshal(response.Body.Bytes(), &m)
+
+		assert.Equal(t, "Title contains badword", m["error"],
+			"Title contains badword")
+	}
 }
 
 func TestGetTodo(t *testing.T) {
