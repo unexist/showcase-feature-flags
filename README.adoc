@@ -57,3 +57,4 @@ include::todo-service-unleash/adapter/TodoResource.go[tag=unleash,indent=2]
 - https://github.com/Unleash/unleash
 - https://www.getunleash.io/
 - https://featureflagsbook.com/
+- https://slumber.lucaspickering.me/book/introduction.html
