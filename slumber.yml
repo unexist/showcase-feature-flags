@@ -1,0 +1,14 @@
+requests:
+  list: !request
+    method: GET
+    url: http://localhost:8080/todo
+
+  good: !request
+    method: POST
+    url: http://localhost:8080/todo
+    body: !json { "description": "string", "done": true, "title": "string" }
+
+  bad: !request
+    method: POST
+    url: http://localhost:8080/todo
+    body: !json { "description": "string", "done": true, "title": "crap string" }
