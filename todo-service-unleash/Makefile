@@ -22,7 +22,7 @@ vet:
 	@$(SHELL) -c "go vet"
 
 # Run
-run: --guard-API_TOKEN
+run: --guard-API_TOKEN build
 	@$(SHELL) -c "API_URL=$(API_URL) API_TOKEN=$(API_TOKEN) ./$(EXE_GIN)"
 
 # Tests
